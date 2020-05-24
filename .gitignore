@@ -14,8 +14,8 @@ registry-data
 sample-data
 assignment-mta/out/*.*
 node_modules
-assignment-mta/Dockerfile
-assignment-mta/.dockerignore
+# assignment-mta/Dockerfile
+# assignment-mta/.dockerignore
 ##
 ##
 ##
