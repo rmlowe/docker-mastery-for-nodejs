@@ -1,7 +1,7 @@
 version: '2.4'
 
 services:
-  traefik:
+  proxy:
     image: traefik:1.7-alpine
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -15,7 +15,10 @@ services:
       - --defaultentrypoints=http,https
     labels:
       - traefik.port=8080
-      - traefik.frontend.rule=Host:traefik.localhost,traefik.vcap.me
+      - traefik.frontend.rule=Host:traefik.localhost
+    networks:
+      - backend
+      - frontend
 
   redis:
     image: redis:alpine
@@ -51,7 +54,9 @@ services:
   result:
     build: 
       context: result
-    command: /node_modules/.bin/nodemon --inspect=0.0.0.0:9229 ./server.js
+    command: nodemon --inspect=0.0.0.0:9229 server.js
+    environment:
+      - NODE_ENV=development
     ports:
       - '5001:80'
       - '9229:9229'
@@ -65,8 +70,6 @@ services:
     labels:
       - traefik.port=80
       - traefik.frontend.rule=Host:result.localhost,result.vcap.me
-    environment:
-      - NODE_ENV=development
     
   worker:
     image: bretfisher/examplevotingapp_worker:java
